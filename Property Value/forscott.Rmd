@@ -1,0 +1,30 @@
+---
+title: "Scott Data"
+output: html_notebook
+---
+
+```{r eval = T, echo = T}
+# make fake data 
+fake<-as.data.frame(cbind(rnorm(17), c(2000:2017)))
+names(fake) = c("z_price", "year")
+head(fake)
+```
+# in base R
+in your data set you are gonna have a bunch of points in at each year bin
+If your last sale data in in this format: feb 16 2012 
+check out the function %in%
+```{r eval = T, echo = T}
+plot(fake$year, fake$z_price, type = "l")
+```
+# in ggplot (my pref)
+```{r eval = T, echo = T}
+ggplot(fake,aes(x = year, y = z_price)) +
+  geom_point()
+```
+# with LM
+```{r eval = T, echo = T}
+ggplot(fake,aes(x = year, y = z_price)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = F)
+
+```
