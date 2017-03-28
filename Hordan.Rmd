@@ -211,12 +211,16 @@ Bay_Area %>%
 
 ```{r}
 sapply(Bay_Area, is.character)
+unique(Bay_Area$ZipCode)
 ```
 ####There is 2 ways I can think of running a good regression model over the Bay Area's wide range of properties. 
 1. Do a full regression model with all I.V. and their levels.
 2. Do a regression model for each ZipCode, giving precise analysis on each Zip.
 3. A 3rd way might be to do a conditional statement: if(zipcode = True, use filter(by zip, lm()), else: use broad lm())
 ```{r}
-catdes(Bay_Area, num.var = 7)
+Bay_Area 
+anova_Bclass <- step(lm(Bay_Area$Trans_SalePrice ~ Bay_Area$BuildingMaterials + Bay_Area$BuildingCondition + Bay_Area$Trans_BldgSF + Bay_Area$NumberOfUnits + Bay_Area$Floors * Bay_Area$ZipCode + Bay_Area$Cap + Bay_Area$GRM))
+aov(anova_Bclass)
+summary(anova_Bclass)
 ```
 
