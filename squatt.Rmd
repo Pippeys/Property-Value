@@ -175,8 +175,27 @@ plot(lean_berkey)
 Include all ZipCodes
 
 ```{r}
-True_mod1 <- step(lm(log(LastPrice) ~ PropSaleGRM * log(Sqft) * LastSale * Units * ZipCode, data = cleaner), direction = "both")
-summary(True_mod1)
-plot(True_mod1)
+#True_mod1 <- step(lm(log(LastPrice) ~ PropSaleGRM * log(Sqft) * LastSale * Units * ZipCode, data = cleaner), direction = "both")
+#summary(True_mod1)
+#plot(True_mod1)
+```
+
+```{r}
+unique(cleaner$ZipCode)
+
+```
+
+```{r}
+New_mod <- lm(log(cleaner$LastPrice) ~ cleaner$PropSaleGRM + log(cleaner$Sqft) + cleaner$LastSale + cleaner$Units + 
+    cleaner$ZipCode + cleaner$PropSaleGRM:log(cleaner$Sqft) + cleaner$PropSaleGRM:cleaner$LastSale + 
+    log(cleaner$Sqft):cleaner$LastSale + cleaner$PropSaleGRM:cleaner$Units + log(cleaner$Sqft):cleaner$Units + 
+    cleaner$LastSale:cleaner$Units + cleaner$PropSaleGRM:cleaner$ZipCode + log(cleaner$Sqft):cleaner$ZipCode + 
+    cleaner$LastSale:cleaner$ZipCode + cleaner$Units:cleaner$ZipCode + cleaner$PropSaleGRM:log(cleaner$Sqft):cleaner$LastSale + 
+    cleaner$PropSaleGRM:log(cleaner$Sqft):cleaner$Units + cleaner$PropSaleGRM:cleaner$LastSale:cleaner$Units + 
+    cleaner$PropSaleGRM:log(cleaner$Sqft):cleaner$ZipCode + cleaner$PropSaleGRM:cleaner$LastSale:cleaner$ZipCode + 
+    log(cleaner$Sqft):cleaner$LastSale:cleaner$ZipCode + cleaner$PropSaleGRM:cleaner$Units:cleaner$ZipCode + 
+    log(cleaner$Sqft):cleaner$Units:cleaner$ZipCode + cleaner$LastSale:cleaner$Units:cleaner$ZipCode + cleaner$PropSaleGRM:log(cleaner$Sqft):cleaner$LastSale:cleaner$ZipCode + 
+    cleaner$PropSaleGRM:cleaner$LastSale:cleaner$Units:cleaner$ZipCode)
+summary(New_mod)
 ```
 
