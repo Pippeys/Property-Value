@@ -1,0 +1,89 @@
+# Need a way to deploy my regression model into production
+# From reddit.com/r/datascience questioning:
+#  -FLASK
+#  -Domino Data Lab
+# Info:
+#  -No need for Server with Wordpress info https://managewp.com/wordpress-custom-code
+
+
+
+
+# Essential
+import time, sys, os, traceback
+import pandas as pd
+import numpy as np
+
+# Preprocessing Packages
+import sklearn
+import sklearn.metrics as sm
+from sklearn.preprocessing import scale
+from sklearn.preprocessing import LabelEncoder
+from sklearn.externals import joblib
+
+# Machine Learning Packages
+from sklearn import linear_model
+from sklearn.linear_model import LinearRegression
+from sklearn.feature_selection import RFE
+from sklearn.svm import SVR
+
+#pickle model
+from sklearn.externals import joblib
+import pickle
+
+# Building LinReg Model
+df = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/Property Value/07-17.csv')
+
+df['sale_date'] = pd.to_datetime(df['Sale Date'])
+df['sale_quarter'] = df['sale_date'].dt.quarter
+df['sale_quarter'] = df['sale_quarter'].astype('int')
+df['log_price'] = np.log(df.Sale_Price)
+df['log_sqft'] = np.log(df['Bldg SF'])
+df['log_far'] = np.log(df['Floor Area Ratio'])
+num = LabelEncoder()
+df['bin_zip'] = num.fit_transform(df['Property Zip Code'].astype('str'))
+
+
+mfdf = df.loc[df['PropertyType'] == 'Multi-Family']
+mfquant = mfdf[['log_price','Cap_Rate','log_sqft','bin_zip']]
+
+mf_data = mfquant.ix[:,(1,2,3)].values
+mf_target = mfquant.ix[:,0].values
+mf_data_names = ['Cap','Sqft','bin_zip']
+x, y = scale(mf_data), mf_target
+LinReg = LinearRegression(normalize=True)
+start = time.time()
+LinReg.fit(x,y)
+joblib.dump(LinReg, 'Property_Estimator.pkl')
+LinReg = joblib.load('Property_Estimator.pkl')
+
+print('Trained in %.1f seconds' % (time.time() - start))
+print('Model score: %s' % LinReg.score(x,y))
+model_columns = None
+
+from flask import Flask, jsonify, make_response, request
+import requests
+app = Flask(__name__)
+
+
+@app.route('/predict', methods=['GET'])
+def predict():
+    json_ = request.get_json()
+    query_df = pd.DataFrame(json_)
+    query = pd.get_dummies(query_df)
+
+    for col in model_columns:
+        if col not in query.columns:
+            query[col] = 0
+
+    prediction = list(LinReg.predict(query))
+    return jsonify ({'Prediction': prediction})
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
+if __name__ == '__main__':
+    LinReg = joblib.load('Property_Estimator.pkl')
+    app.run(port=8080,debug=True, host='localhost')

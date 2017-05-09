@@ -2,15 +2,22 @@
 import pandas as pd
 import numpy as np
 
-# Machine Learning & Preprocessing Packages
+# Preprocessing Packages
 import sklearn
 import sklearn.metrics as sm
-from sklearn import linear_model
-from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import scale
 from sklearn.preprocessing import LabelEncoder
+
+# Machine Learning Packages
+from sklearn import linear_model
+from sklearn.linear_model import LinearRegression
 from sklearn.feature_selection import RFE
 from sklearn.svm import SVR
+
+#pickle model
+from sklearn.externals import joblib
+import pickle
+
 # Loading Data
 # Mac
 #df = pd.read_csv('/Users/magicsoccer10/Dropbox/twerk werk/Property Value/07-17.csv')
@@ -42,8 +49,10 @@ x, y = scale(mf_data), mf_target
 LinReg = LinearRegression(normalize=True)
 LinReg.fit(x,y)
 print (LinReg.score(x,y))
-RFE(LinReg,3)
-estimator = SVR(kernel='linear')
-selector = RFE(estimator, 5, step=1)
-selector.support_
-selector.ranking_
+#RFE(LinReg,3)
+#estimator = SVR(kernel='linear')
+#selector = RFE(estimator, 5, step=1)
+#selector.support_
+#selector.ranking_
+joblib.dump(LinReg, 'Property_Estimator.pkl')
+LinReg = joblib.load('Property_Estimator.pkl')
