@@ -28,7 +28,7 @@ import pickle
 # Work
 df = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/Property Value/07-17.csv')
 
-
+# Transforming data for modeling (based on exploration: (See Jupyter/Learning_Satyrn))
 df['sale_date'] = pd.to_datetime(df['Sale Date'])
 df['sale_quarter'] = df['sale_date'].dt.quarter
 df['sale_quarter'] = df['sale_quarter'].astype('int')
@@ -38,14 +38,17 @@ df['log_far'] = np.log(df['Floor Area Ratio'])
 num = LabelEncoder()
 df['bin_zip'] = num.fit_transform(df['Property Zip Code'].astype('str'))
 
-
+# Filtering by Multi-Family and Create modelling DataFrame
 mfdf = df.loc[df['PropertyType'] == 'Multi-Family']
 mfquant = mfdf[['log_price','Cap_Rate','log_sqft','bin_zip']]
 
+#Specifying Independent Variables and Dependent Variables
 mf_data = mfquant.ix[:,(1,2,3)].values
 mf_target = mfquant.ix[:,0].values
 mf_data_names = ['Cap','Sqft','bin_zip']
 x, y = scale(mf_data), mf_target
+
+#Regression Model 
 LinReg = LinearRegression(normalize=True)
 LinReg.fit(x,y)
 print (LinReg.score(x,y))
