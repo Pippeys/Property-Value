@@ -5,13 +5,20 @@
 # Info:
 #  -No need for Server with Wordpress info https://managewp.com/wordpress-custom-code
 
+import pandas as pd
+from sklearn.externals import joblib
 from flask import Flask, jsonify, make_response, request
 import requests
+
 app = Flask(__name__)
 
+answers = {0 : 4, 1 : 20000, 2 : 94565}
 
-@app.route('/predict', methods=['GET'])
-def predict():
+
+@app.route('/predict', methods=['POST','GET'])
+def question():
+    return print("hello jello")
+def predict(question):
     json_ = request.get_json()
     query_df = pd.DataFrame(json_)
     query = pd.get_dummies(query_df)
@@ -31,4 +38,4 @@ def not_found(error):
 
 if __name__ == '__main__':
     LinReg = joblib.load('Property_Estimator.pkl')
-    app.run(port=8080,debug=True, host='localhost')
+    app.run(debug=True, host='localhost')
