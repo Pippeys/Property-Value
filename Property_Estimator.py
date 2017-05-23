@@ -18,14 +18,6 @@ from sklearn.svm import SVR
 from sklearn.externals import joblib
 import pickle
 
-# Loading Data
-# Mac
-#df = pd.read_csv('C:/Users/magicsoccer10/Dropbox/twerk werk/cre_values')
-
-# Arch
-#df = pd.read_csv('C:/Users/scott/Dropbox/twerk werk/cre_values')
-
-# Work
 
 
 
@@ -55,7 +47,13 @@ def regression (x,y):
     return(LinReg.fit(x,y))
 
 def main():
-    df = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/cre_values')
+    # Loading Data
+    # Mac
+    #df = pd.read_csv('C:/Users/magicsoccer10/Dropbox/twerk werk/cre_values')
+    # Arch
+    df = pd.read_csv('C:/Users/scott/Dropbox/twerk werk/cre_values')
+    # Work
+    #df = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/cre_values')
     mfquant = transform(df)
     #Specifying Independent Variables and Dependent Variables
     mf_data = mfquant.ix[:,(1,2,3)].values
