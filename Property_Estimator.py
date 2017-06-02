@@ -74,23 +74,21 @@ def regression (mf):
     #joblib.dump(results, 'Property_Estimator.pkl')
     #LinReg = joblib.load('Property_Estimator.pkl')
 
-    return(results.predict())
-
-def predicting(model):
     # Inputting info for individual estimate
     print('CAP rate: ')
-    capper = input()
+    capper = float(input())
     print('Number of Units: ')
-    num_units = input()
+    num_units = int(input())
     print('Square Footage: ')
-    sqfts = input()
+    sqfts = int(input())
     print('Year Built: ')
     year = input()
-    year = year
+    year = int(year[:-1])
     print('Zip Code: ')
     zipped = input()
-    zipped = zipped.astype('str').str[:-1]
+    zipped = zipped[:-1]
 
+    # Building the DF for the user inputted properties. Could be used in Machine Learning later if users are frequent.
     a = pd.DataFrame({'cap':[capper],'units':[num_units], 'sqft':[sqfts],'yearbuilt':[year], 'zipper':[zipped]})
     ans = results.predict(a)
     price = np.exp(ans).astype(int)
@@ -99,7 +97,9 @@ def predicting(model):
     print(price)
     print('Price per SQFT: ')
     print(ppsf.values)
-    return(price)
+
+
+    return(price, ppsf.values)
 
 
 def main():
@@ -107,14 +107,13 @@ def main():
     # Mac
     #x = pd.read_csv('C:/Users/magicsoccer10/Dropbox/twerk werk/cre_values')
     # Arch
-    x = pd.read_csv('C:/Users/scott/Dropbox/twerk werk/Data/cre_values.csv')
+    #x = pd.read_csv('C:/Users/scott/Dropbox/twerk werk/Data/cre_values.csv')
     # Work
-    #x = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/Data/cre_values.csv')
+    x = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/Data/cre_values.csv')
 
 
     mf = clean_data(x)
     model = regression(mf)
-    prediction = predicting(model)
 
 
 
