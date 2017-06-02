@@ -22,7 +22,7 @@ library(corrgram)
 library(scatterplot3d)
 library(neuralnet)
 library(readxl)
-Compp07_17 <- read_csv("C:/Users/SStandring/Dropbox/twerk werk/cre_values", 
+Compp07_17 <- read_csv("C:/Users/SStandring/Dropbox/twerk werk/Data/cre_values", 
     col_types = cols(`Sale Date` = col_date(format = "%m/%d/%Y")))
 ```
 

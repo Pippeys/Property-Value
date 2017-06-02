@@ -1,67 +1,124 @@
 # Essential packages
-import pandas as pd
+import sys
+import time
+import datetime as dt
+from datetime import datetime
+import urllib
+
+
+# Number manipulation
 import numpy as np
 
-# Preprocessing Packages
+
+# Structure manipulation
+import pandas as pd
+from pandas import Series, DataFrame
+
+
+# Stats
+import scipy as sp
+from scipy import stats
+from scipy.stats.stats import pearsonr
+from scipy.stats import spearmanr
+from scipy.stats import chi2_contingency
+
+
+# Machine Learning & Preprocessing Package
 import sklearn
 import sklearn.metrics as sm
+from sklearn import preprocessing
+from sklearn import decomposition
+from sklearn import metrics
 from sklearn.preprocessing import scale
 from sklearn.preprocessing import LabelEncoder
-
-# Machine Learning Packages
-from sklearn import linear_model
-from sklearn.linear_model import LinearRegression
-from sklearn.feature_selection import RFE
-from sklearn.svm import SVR
-
-#pickle model
+from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
 import pickle
 
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+from collections import Counter
 
 
 
-# Transforming data for modeling (based on exploration: (See Jupyter/Learning_Satyrn))
-def transform(df):
-    df['log_price'] = np.log(df.Sale_Price)
-    df['log_sqft'] = np.log(df['Bldg SF'])
-    num = LabelEncoder()
-    df['Property Zip Code'] = df['Property Zip Code'].astype(str).str[:-2]
-    df['bin_zip'] = num.fit_transform(df['Property Zip Code'].astype('str'))
-    # Filtering by Multi-Family and Create modelling DataFrame
-    mfdf = df.loc[df['PropertyType'] == 'Multi-Family']
-    mfquant = mfdf[['log_price','Cap_Rate','log_sqft','bin_zip']]
-    return mfquant
 
-def regression (x,y):
+def clean_data(x):
+    df = x.dropna(axis = 0)
+    print(df.head())
+    df['sqft'] = df['Bldg SF']
+    df['cap'] = df['Cap_Rate'].astype(int)
+    df['units'] = df['Number Of Units']
+    df['yearbuilt'] = df['Year Built'].astype('str').str[:-3]
+    df['yearbuilt'] = df['yearbuilt'].astype(int)
+    df['Property Zip Code'] = df['Property Zip Code'].astype('str').str[:-1]
+    def remover(s):
+        return int(s[-4:])
+
+    df['year'] = [remover(s) for s in df['Sale Date']]
+    df['sale_year'] = df['year'].astype('str')
+    df['zipper'] = df['Property Zip Code']
+    mf = df.loc[df['PropertyType'] == 'Multi-Family']
+    mf = mf.loc[mf['sale_year'] != '2007']
+    mf = mf.loc[mf['sale_year'] != '2008']
+    mf = mf.loc[mf['sale_year'] != '2009']
+    mf = mf.loc[mf['sale_year'] != '2010']
+    mf = mf.loc[mf['sale_year'] != '2011']
+    return(mf)
+
+def regression (mf):
     #Regression Model
-    LinReg = LinearRegression(normalize=True)
-    LinReg.fit(x,y)
-    #RFE(LinReg,3)
-    #estimator = SVR(kernel='linear')
-    #selector = RFE(estimator, 5, step=1)
-    #selector.support_
-    #selector.ranking_
-    joblib.dump(LinReg, 'Property_Estimator.pkl')
-    LinReg = joblib.load('Property_Estimator.pkl')
-    return(LinReg.fit(x,y))
+    est = smf.ols(formula = 'np.log(Sale_Price) ~ (cap + (np.log(units)/np.log(sqft)) + yearbuilt) * C(zipper)', data = mf)
+    results = est.fit()
+    # For pickling later
+    #joblib.dump(results, 'Property_Estimator.pkl')
+    #LinReg = joblib.load('Property_Estimator.pkl')
+
+    return(results.predict())
+
+def predicting(model):
+    # Inputting info for individual estimate
+    print('CAP rate: ')
+    capper = input()
+    print('Number of Units: ')
+    num_units = input()
+    print('Square Footage: ')
+    sqfts = input()
+    print('Year Built: ')
+    year = input()
+    year = year
+    print('Zip Code: ')
+    zipped = input()
+    zipped = zipped.astype('str').str[:-1]
+
+    a = pd.DataFrame({'cap':[capper],'units':[num_units], 'sqft':[sqfts],'yearbuilt':[year], 'zipper':[zipped]})
+    ans = results.predict(a)
+    price = np.exp(ans).astype(int)
+    ppsf = price/a.sqft
+    print('Price: ')
+    print(price)
+    print('Price per SQFT: ')
+    print(ppsf.values)
+    return(price)
+
 
 def main():
     # Loading Data
     # Mac
-    #df = pd.read_csv('C:/Users/magicsoccer10/Dropbox/twerk werk/cre_values')
+    #x = pd.read_csv('C:/Users/magicsoccer10/Dropbox/twerk werk/cre_values')
     # Arch
-    df = pd.read_csv('C:/Users/scott/Dropbox/twerk werk/cre_values')
+    x = pd.read_csv('C:/Users/scott/Dropbox/twerk werk/Data/cre_values.csv')
     # Work
-    #df = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/cre_values')
-    mfquant = transform(df)
-    #Specifying Independent Variables and Dependent Variables
-    mf_data = mfquant.ix[:,(1,2,3)].values
-    mf_target = mfquant.ix[:,0].values
-    mf_data_names = ['Cap','Sqft','bin_zip']
-    x, y = scale(mf_data), mf_target
-    LinReg = regression(x,y)
-    print (LinReg.score(x,y))
+    #x = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/Data/cre_values.csv')
+
+
+    mf = clean_data(x)
+    model = regression(mf)
+    prediction = predicting(model)
+
+
+
+
 
 if __name__ == '__main__':
     main()
