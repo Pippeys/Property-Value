@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang='en'>
+
+  <head>
+      <meta charset="utf-8"/>
+      <title>Property Estimator</title>
+      <link rel='stylesheet' href="static/estimator.css"/>
+  </head>
+
+  <body>
+      <header>Property Estimator</header>
+      <hr>
+      <div id="main">
+        <article>
+          {% for entry in entries %}
+              <span title={{entry[1]}}>{{entry[0]}}</span>
+          {% endfor %}
+        </article>
+      </div>
+      <hr>
+      <footer>
+          <form action="." method="POST">
+              What is your email?:
+              <input type="text" name="email">
+              <br>
+              What is the rent roll for the property?:
+              <input type="text" name="exp/rent_roll">
+              <br>
+              How many units?:
+              <input type="text" name="units">
+              <br>
+              What is the square footage?:
+              <input type="text" name="sqft">
+              <br>
+              What year was it built?:
+              <input type="text" name="year_built">
+              <br>
+              What zip code is it in?:
+              <input type="text" name="zipper">
+              <input type="submit">
+
+          </form>
+      </footer>
+  </body>
+</html>

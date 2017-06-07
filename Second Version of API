@@ -17,49 +17,46 @@ import requests
 app = Flask(__name__)
 
 
-api = Api(
-    app,
-    version='1.0',
-    title='Property Value Estimator',
-    description = 'A better way to prediction your property')
-
-ns = api.namespace('property_value',
-     description = 'Insight to true value')
+#api = Api(
+#    app,
+#    version='1.0',
+#    description = 'A better way to prediction your property')
+#ns = api.namespace('property_value',
+#     description = 'Insight to true value')
 
 
-parser=api.parser()
+#parser=api.parser()
 
-parser.add_agrument('Rent Roll/expenses',
-    type=float,
-    required=True,
-    help='This will help guide your true value in terms of CAP Rate',
-    location='form')
+#parser.add_agrument('Rent Roll/expenses',
+#    type=float,
+#    required=True,
+#    help='This will help guide your true value in terms of CAP Rate',
+#    location='form')
 
-parser.add_agrument('Number of Units',
-    type=int,
-    required=True,
-    help='Number of Units in the property.',
-    location='form')
+#parser.add_agrument('Number of Units',
+#    type=int,
+#    required=True,
+#    help='Number of Units in the property.',
+#    location='form')
 
-parser.add_agrument('Square Footage',
-    type=int,
-    required=True,
-    help='How many square feet make up your building?',
-    location='form')
+#parser.add_agrument('Square Footage',
+#    type=int,
+#    required=True,
+#    help='How many square feet make up your building?',
+#    location='form')
 
-parser.add_agrument('Year Built',
-    type=int,
-    required=True,
-    help='What year was your property built?',
-    location='form')
+#parser.add_agrument('Year Built',
+#    type=int,
+#    required=True,
+#    help='What year was your property built?',
+#    location='form')
 
-parser.add_agrument('Zip Code',
-    type=str,
-    required=True,
-    help='What is the zip code of the location of your building?',
-    location='form')
+#parser.add_agrument('Zip Code',
+#    type=str,
+#    required=True,
+#    help='What is the zip code of the location of your building?',
 
-resource_fields= api.model('Resource', {'results': fields.String,})
+#resource_fields= api.model('Resource', {'results': fields.String,})
 
 
 

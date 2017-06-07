@@ -33,7 +33,7 @@ from sklearn.preprocessing import scale
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
-import pickle
+#import pickle
 
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
@@ -45,7 +45,6 @@ from collections import Counter
 
 def clean_data(x):
     df = x.dropna(axis = 0)
-    print(df.head())
     df['sqft'] = df['Bldg SF']
     df['cap'] = df['Cap_Rate'].astype(int)
     df['units'] = df['Number Of Units']
@@ -66,7 +65,7 @@ def clean_data(x):
     mf = mf.loc[mf['sale_year'] != '2011']
     return(mf)
 
-def regression (mf):
+def regression (mf,user_exp,user_units,user_sqft,user_year,user_zip):
     #Regression Model
     est = smf.ols(formula = 'np.log(Sale_Price) ~ (cap + (np.log(units)/np.log(sqft)) + yearbuilt) * C(zipper)', data = mf)
     results = est.fit()
@@ -75,17 +74,12 @@ def regression (mf):
     #LinReg = joblib.load('Property_Estimator.pkl')
 
     # Inputting info for individual estimate
-    print('CAP rate: ')
-    capper = float(input())
-    print('Number of Units: ')
-    num_units = int(input())
-    print('Square Footage: ')
-    sqfts = int(input())
-    print('Year Built: ')
-    year = input()
+    capper = float(user_exp))
+    num_units = int(user_units)
+    sqfts = int(user_sqft)
+    year = user_year
     year = int(year[:-1])
-    print('Zip Code: ')
-    zipped = input()
+    zipped = user_zip
     zipped = zipped[:-1]
 
     # Building the DF for the user inputted properties. Could be used in Machine Learning later if users are frequent.
@@ -93,11 +87,6 @@ def regression (mf):
     ans = results.predict(a)
     price = np.exp(ans).astype(int)
     ppsf = price/a.sqft
-    print('Price: ')
-    print(price)
-    print('Price per SQFT: ')
-    print(ppsf.values)
-
 
     return(price, ppsf.values)
 
