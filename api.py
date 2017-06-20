@@ -13,7 +13,7 @@ users = {}
 
 def estimator():
 
-    if request.method == 'GET'
+    if request.method == 'GET':
         return render_template('estimator_temp', entries=entries)
 
     ip_addr = request.environ['REMOTE_ADDR']
@@ -43,7 +43,7 @@ def estimator():
 
     answers = pd.DataFrame({'cap':[entries[0]],'units':[entries[1]], 'sqft':[entries[2]],'yearbuilt':[entries[3]], 'zipper':[entries[4]]})
 
-    retrun redirect(url_for('estimator'))
+    retrun redirect(url_for('estimator')
 
 if __name__ == '__main__':
     app.run(debug=True, port=4444)

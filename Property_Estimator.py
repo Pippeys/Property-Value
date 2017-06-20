@@ -74,7 +74,7 @@ def regression (mf,user_exp,user_units,user_sqft,user_year,user_zip):
     #LinReg = joblib.load('Property_Estimator.pkl')
 
     # Inputting info for individual estimate
-    capper = float(user_exp))
+    capper = float(user_exp)
     num_units = int(user_units)
     sqfts = int(user_sqft)
     year = user_year
