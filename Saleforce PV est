@@ -1,0 +1,120 @@
+# Base Property values
+# Use average CAP rate to estimate values
+
+import sys
+import time
+import datetime as dt
+from datetime import datetime
+import urllib
+# Number manipulation
+import numpy as np
+
+
+# Structure manipulation
+import pandas as pd
+from pandas import Series, DataFrame
+from pandas.tools.plotting import scatter_matrix
+
+
+# Graphing
+import seaborn as sb
+
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
+
+
+# Stats
+import scipy as sp
+from scipy import stats
+from scipy.stats.stats import pearsonr
+from scipy.stats import spearmanr
+from scipy.stats import chi2_contingency
+
+
+# Machine Learning & Preprocessing Package
+import sklearn
+import sklearn.metrics as sm
+from sklearn import linear_model
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LassoCV
+from sklearn.linear_model import LassoLarsCV
+from sklearn.linear_model import LassoLarsIC
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn import preprocessing
+from sklearn import decomposition
+from sklearn import metrics
+from sklearn.cluster import DBSCAN
+from sklearn.decomposition import FactorAnalysis
+from sklearn.decomposition import PCA
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.preprocessing import scale
+from sklearn.preprocessing import LabelEncoder
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.cross_validation import train_test_split
+
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+from collections import Counter
+
+# Parameters for graphs
+#%matplotlib inline
+#rcParams['figure.figsize'] = 10,10
+#sb.set_style('whitegrid')
+
+x = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/Data/cre_values.csv')
+epv = pd.read_csv('C:/Users/sstandring/Desktop/Data Entry/Estimating Property Value.csv')
+
+
+# Cleaning and Labeling
+df = x.dropna(axis = 0)
+df['sqft'] = df['Bldg SF']
+df['cap'] = df['Cap_Rate'].astype(int)
+df['units'] = df['Number Of Units']
+df['sale_date'] = pd.to_datetime(df['Sale Date'])
+df['sale_quarter'] = df['sale_date'].dt.quarter
+df['sale_quarter'] = df['sale_quarter'].astype('str')
+
+def remover(s):
+    return int(s[-4:])
+
+df['year'] = [remover(s) for s in df['Sale Date']]
+
+df['sale_year'] = df['year'].astype('str')
+df['sale_y_q'] = df.sale_year + '.' + df.sale_quarter
+df['sale_year_qrt'] = df['sale_y_q'].astype('float')
+df['sale_year_qrt'] = df['sale_year_qrt'] - 2000
+
+df['yearbuilt'] = df['Year Built'].astype('str').str[:-3]
+df['yearbuilt'] = df['yearbuilt'].astype(int)
+
+df['Property Zip Code'] = df['Property Zip Code'].astype('str').str[:-1]
+df['zipper'] = df['Property Zip Code'].astype('str')
+# Exclude years 2007-2011
+mf = df.loc[df['PropertyType'] == 'Multi-Family']
+mf = mf.loc[mf['sale_year'] != '2007']
+mf = mf.loc[mf['sale_year'] != '2008']
+mf = mf.loc[mf['sale_year'] != '2009']
+mf = mf.loc[mf['sale_year'] != '2010']
+mf = mf.loc[mf['sale_year'] != '2011']
+
+epv['Zip'] = epv['Zip'].astype('str').str[:-1]
+
+#Getting Zip Code averages
+x=mf.zipper.unique()
+cap_mean = []
+for i in x:
+    zipped = mf.loc[mf['zipper'] == i]
+    means = np.mean(zipped.cap)
+    cap_mean.append(means)
+
+zipncap = pd.DataFrame(x, cap_mean)
+print(zipncap)
+
+
+
+
+
+pv = epv[['sqft', 'Units','Cap', 'Zip']]
+zippv = pv.groupby(['Zip'])
