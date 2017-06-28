@@ -43,7 +43,15 @@ from collections import Counter
 
 
 
-def clean_data(x):
+def clean_data():
+    # Loading Data
+    # Mac
+    #x = pd.read_csv('C:/Users/magicsoccer10/Dropbox/twerk werk/cre_values')
+    # Arch
+    x = pd.read_csv('C:/Users/scott/Dropbox/twerk werk/Data/cre_values.csv')
+    # Work
+    #x = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/Data/cre_values.csv')
+
     df = x.dropna(axis = 0)
     df['sqft'] = df['Bldg SF']
     df['cap'] = df['Cap_Rate'].astype(int)
@@ -91,22 +99,7 @@ def regression (mf,user_exp,user_units,user_sqft,user_year,user_zip):
     return(price, ppsf.values)
 
 
-def main():
-    # Loading Data
-    # Mac
-    #x = pd.read_csv('C:/Users/magicsoccer10/Dropbox/twerk werk/cre_values')
-    # Arch
-    #x = pd.read_csv('C:/Users/scott/Dropbox/twerk werk/Data/cre_values.csv')
-    # Work
-    x = pd.read_csv('C:/Users/sstandring/Dropbox/twerk werk/Data/cre_values.csv')
-
-
-    mf = clean_data(x)
-    model = regression(mf)
-
-
-
-
 
 if __name__ == '__main__':
-    main()
+        mf = clean_data()
+        model = regression(mf)

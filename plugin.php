@@ -7,7 +7,7 @@ function embed_python( $attributes )
 {
     $data = shortcode_atts(
         [
-            'file' => 'api.py'
+            'file' => 'flask_api.py'
         ],
         $attributes
     );
