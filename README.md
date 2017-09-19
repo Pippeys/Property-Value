@@ -10,5 +10,5 @@ The **Jupyter** Folder is where all the exploration and first iteration of regre
 
 The **Property Value** Folder is the database
 
-
+The **Property Estimator** file is the current regression model. Developed from Jupyter Folder.
 
